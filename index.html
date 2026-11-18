@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn Luyện Toán Lớp 3 - Bé Cẩm Tiên</title>
+    <!-- Tải Tailwind CSS qua CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải Font chữ Be Vietnam Pro & Nunito thân thiện, rõ nét tiếng Việt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Be Vietnam Pro"', 'sans-serif'],
+                        display: ['"Nunito"', 'sans-serif'],
+                    },
+                    colors: {
+                        navy: {
+                            950: '#081528',
+                            900: '#0f2544',
+                            800: '#1e3a5f',
+                            700: '#2b547e',
+                            600: '#3b6e9c',
+                            100: '#e2ecf7',
+                            50: '#f0f4f8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Thiết lập nền tổng thể dịu mắt với họa tiết trang trí nhẹ nhàng */
+        body {
+            background-color: #f0f4f8;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(43, 84, 126, 0.14) 0px, transparent 50%),
+                radial-gradient(at 90% 15%, rgba(15, 37, 68, 0.10) 0px, transparent 50%),
+                radial-gradient(at 50% 90%, rgba(59, 110, 156, 0.12) 0px, transparent 55%);
+            background-attachment: fixed;
+            color: #0f2544;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Hiệu ứng kính mờ (Glassmorphism / Frosted Glass) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 12px 36px -6px rgba(15, 37, 68, 0.08), 0 4px 12px -2px rgba(15, 37, 68, 0.04);
+        }
+
+        .glass-navy {
+            background: rgba(15, 37, 68, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Hiệu ứng chuyển động mượt mà cho các nút đáp án */
+        .option-btn {
+            transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .option-btn:hover:not(.selected) {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.98);
+            border-color: #2b547e;
+            box-shadow: 0 8px 20px -4px rgba(15, 37, 68, 0.12);
+        }
+        .option-btn.selected {
+            background: linear-gradient(135deg, #0f2544 0%, #1e3a5f 100%);
+            color: #ffffff;
+            border-color: #0f2544;
+            box-shadow: 0 10px 24px -4px rgba(15, 37, 68, 0.32);
+            transform: translateY(-1px);
+        }
+
+        /* Hiệu ứng xuất hiện màn hình */
+        .fade-in {
+            animation: fadeIn 0.35s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Nhấp nháy nhẹ khi đồng hồ dưới 5 phút */
+        @keyframes pulseWarning {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+        .timer-warning {
+            animation: pulseWarning 1.2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between antialiased selection:bg-navy-800 selection:text-white">
+
+    <!-- ========================================================= -->
+    <!-- MÀN HÌNH 1: TRANG MỞ ĐẦU (START SCREEN)                   -->
+    <!-- ========================================================= -->
+    <main id="screen-start" class="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8 fade-in">
+        <div class="w-full max-w-3xl glass-card rounded-[2rem] p-6 sm:p-10 md:p-12 relative overflow-hidden">
+            <!-- Họa tiết trang trí góc thẻ -->
+            <div class="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-navy-700/10 pointer-events-none"></div>
+            <div class="absolute -bottom-16 -left-16 w-44 h-44 rounded-full bg-navy-900/10 pointer-events-none"></div>
+
+            <!-- Huy hiệu phía trên -->
+            <div class="flex justify-center mb-5">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-navy-900 text-white text-xs sm:text-sm font-bold tracking-wide uppercase shadow-sm">
+                    <svg class="w-4 h-4 text-amber-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    Chương Trình Toán Lớp 3
+                </span>
+            </div>
+
+            <!-- Tiêu đề chính của bài kiểm tra -->
+            <h1 class="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-center text-navy-900 leading-snug mb-8">
+                BÀI KIỂM TRA ÔN LUYỆN:<br class="hidden sm:inline">
+                <span class="text-navy-700">PHÉP NHÂN &amp; PHÉP CHIA (2 CHỮ SỐ VỚI 1 CHỮ SỐ)</span>
+            </h1>
+
+            <!-- Thẻ thông tin thí sinh & cấu trúc đề -->
+            <div class="bg-white/80 border border-navy-900/10 rounded-3xl p-5 sm:p-7 mb-8 shadow-inner space-y-4">
+                <!-- Tên học sinh (Gán duy nhất 1 giá trị: Cẩm Tiên) -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-navy-900/10 gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-navy-900 text-white flex items-center justify-center shrink-0 shadow-sm">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-navy-600">Họ và tên học sinh</p>
+                            <p class="font-display text-xl sm:text-2xl font-extrabold text-navy-900" id="start-student-name">Cẩm Tiên</p>
+                        </div>
+                    </div>
+                    <span class="self-start sm:self-center px-3.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 text-xs sm:text-sm font-bold">
+                        Sẵn sàng làm bài
+                    </span>
+                </div>
+
+                <!-- Nội dung kiểm tra -->
+                <div class="flex items-start gap-3 pb-4 border-b border-navy-900/10">
+                    <div class="w-11 h-11 rounded-2xl bg-navy-100 text-navy-900 flex items-center justify-center shrink-0 mt-0.5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold uppercase tracking-wider text-navy-600 mb-1">Nội dung kiểm tra</p>
+                        <ul class="text-sm sm:text-base font-medium text-navy-900 space-y-1">
+                            <li>• Phép nhân số có 2 chữ số với số có 1 chữ số (có nhớ và không nhớ).</li>
+                            <li>• Phép chia số có 2 chữ số cho số có 1 chữ số (<strong>chia hết</strong> và <strong>chia có dư</strong>).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Thông số Số câu & Thời gian -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <div class="flex items-center gap-3 bg-navy-50/90 p-3.5 rounded-2xl border border-navy-900/5">
+                        <div class="w-10 h-10 rounded-xl bg-navy-800 text-white flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-navy-600">Số lượng câu hỏi</p>
+                            <p class="text-base sm:text-lg font-extrabold text-navy-900">20 câu trắc nghiệm</p>
+                            <p class="text-xs text-navy-600">4 lựa chọn A, B, C, D (1 đáp án đúng)</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-navy-50/90 p-3.5 rounded-2xl border border-navy-900/5">
+                        <div class="w-10 h-10 rounded-xl bg-navy-800 text-white flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-navy-600">Thời gian làm bài</p>
+                            <p class="text-base sm:text-lg font-extrabold text-navy-900">40 phút</p>
+                            <p class="text-xs text-navy-600">Tự động đếm ngược &amp; nộp bài</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lời nhắn nhủ nhỏ cho bé -->
+            <p class="text-center text-sm sm:text-base text-navy-700 font-medium mb-6">
+                Chúc <strong>Cẩm Tiên</strong> bình tĩnh, tính toán thật cẩn thận và đạt điểm 10 nhé!
+            </p>
+
+            <!-- Nút BẮT ĐẦU LÀM BÀI -->
+            <div class="flex justify-center">
+                <button id="btn-start-quiz" type="button"
+                    class="w-full sm:w-auto min-w-[280px] py-4 px-8 rounded-2xl bg-gradient-to-r from-navy-900 via-navy-800 to-navy-700 hover:from-navy-950 hover:to-navy-800 text-white font-display font-extrabold text-lg sm:text-xl tracking-wide shadow-xl shadow-navy-900/25 hover:shadow-2xl hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-3 cursor-pointer">
+                    <span>BẮT ĐẦU LÀM BÀI</span>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- MÀN HÌNH 2: TRANG LÀM BÀI (QUIZ SCREEN)                   -->
+    <!-- ========================================================= -->
+    <div id="screen-quiz" class="hidden flex-col min-h-screen fade-in">
+        <!-- Thanh Header cố định phía trên -->
+        <header class="sticky top-0 z-30 glass-navy text-white shadow-lg">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
+                <!-- Thông tin học sinh -->
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/15 flex items-center justify-center font-display font-extrabold text-base sm:text-lg border border-white/20">
+                        CT
+                    </div>
+                    <div>
+                        <p class="text-[11px] text-navy-100 uppercase tracking-wider leading-none">Học sinh</p>
+                        <p class="font-display font-extrabold text-base sm:text-lg leading-tight" id="quiz-student-name">Cẩm Tiên</p>
+                    </div>
+                </div>
+
+                <!-- Tiến độ & Đồng hồ đếm ngược -->
+                <div class="flex items-center gap-2.5 sm:gap-4">
+                    <!-- Số câu đã làm -->
+                    <div class="bg-white/10 border border-white/15 rounded-xl px-3 py-1.5 text-center">
+                        <span class="block text-[10px] sm:text-xs text-navy-100">Tiến độ</span>
+                        <span id="quiz-progress-text" class="font-display font-extrabold text-sm sm:text-base text-white">Đã làm 0/20 câu</span>
+                    </div>
+
+                    <!-- Đồng hồ đếm ngược -->
+                    <div id="timer-box" class="bg-white text-navy-900 rounded-xl px-3.5 py-1.5 flex items-center gap-2 shadow-md">
+                        <svg id="timer-icon" class="w-5 h-5 text-navy-800 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div>
+                            <span class="block text-[10px] font-bold uppercase tracking-wider text-navy-600 leading-none">Thời gian</span>
+                            <span id="timer-display" class="font-display font-black text-base sm:text-xl tracking-wider leading-tight">40:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Khu vực nội dung chính của bài làm -->
+        <div class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Cột trái (8 cột trên desktop): Thẻ câu hỏi và 4 đáp án -->
+            <section class="lg:col-span-8 glass-card rounded-[2rem] p-5 sm:p-8 flex flex-col justify-between min-h-[420px]">
+                <div>
+                    <!-- Nhãn câu hỏi + Chủ đề -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+                        <span id="question-number-badge" class="px-4 py-1.5 rounded-xl bg-navy-900 text-white font-display font-extrabold text-base sm:text-lg shadow-sm">
+                            Câu 1 / 20
+                        </span>
+                        <span id="question-topic-badge" class="px-3.5 py-1 rounded-xl bg-navy-100 text-navy-800 text-xs sm:text-sm font-bold">
+                            Phép nhân 2 chữ số với 1 chữ số
+                        </span>
+                    </div>
+
+                    <!-- Nội dung câu hỏi -->
+                    <div class="bg-white/90 border border-navy-900/10 rounded-2xl p-5 sm:p-6 mb-6 shadow-sm">
+                        <h2 id="question-text" class="font-display text-xl sm:text-2xl md:text-[26px] font-extrabold text-navy-900 leading-relaxed">
+                            Đang tải câu hỏi...
+                        </h2>
+                    </div>
+
+                    <!-- Danh sách 4 phương án A, B, C, D -->
+                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+                        <!-- Các nút phương án sẽ được render bằng JS -->
+                    </div>
+                </div>
+
+                <!-- Thanh nút điều hướng Câu trước / Câu tiếp theo -->
+                <div class="flex items-center justify-between gap-3 pt-7 mt-7 border-t border-navy-900/10">
+                    <button id="btn-prev" type="button"
+                        class="px-4 sm:px-6 py-3.5 rounded-2xl bg-white hover:bg-navy-100 text-navy-900 font-bold text-sm sm:text-base border border-navy-900/15 shadow-sm disabled:opacity-40 disabled:pointer-events-none transition flex items-center gap-2 cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                        <span>Câu trước</span>
+                    </button>
+
+                    <button id="btn-next" type="button"
+                        class="px-5 sm:px-7 py-3.5 rounded-2xl bg-navy-800 hover:bg-navy-900 text-white font-bold text-sm sm:text-base shadow-md transition flex items-center gap-2 cursor-pointer">
+                        <span>Câu tiếp theo</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Cột phải (4 cột trên desktop): Bảng điều hướng nhanh 20 câu & Nút Nộp bài -->
+            <aside class="lg:col-span-4 glass-card rounded-[2rem] p-5 sm:p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-display font-extrabold text-lg text-navy-900">Danh sách câu hỏi</h3>
+                    <span class="text-xs font-semibold text-navy-600">Chạm số để chuyển câu</span>
+                </div>
+
+                <!-- Chú thích màu sắc -->
+                <div class="flex flex-wrap items-center gap-3 text-xs font-semibold text-navy-700 mb-4 pb-3 border-b border-navy-900/10">
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-3.5 h-3.5 rounded bg-navy-900 inline-block"></span> Đã làm
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-3.5 h-3.5 rounded bg-white border-2 border-amber-500 inline-block"></span> Đang xem
+                    </span>
+                    <span class="inline-flex items-center gap-1.5">
+                        <span class="w-3.5 h-3.5 rounded bg-white border border-navy-900/20 inline-block"></span> Chưa làm
+                    </span>
+                </div>
+
+                <!-- Lưới 20 ô số câu hỏi -->
+                <div id="question-nav-grid" class="grid grid-cols-5 gap-2.5 mb-6">
+                    <!-- Render 20 nút số bằng JS -->
+                </div>
+
+                <!-- Nút NỘP BÀI nổi bật -->
+                <button id="btn-submit-open" type="button"
+                    class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-display font-extrabold text-base sm:text-lg tracking-wide shadow-lg shadow-emerald-900/20 hover:shadow-xl transition flex items-center justify-center gap-2.5 cursor-pointer">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>NỘP BÀI</span>
+                </button>
+            </aside>
+
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MÀN HÌNH 3: TRANG TRẢ KẾT QUẢ (RESULT SCREEN)             -->
+    <!-- ========================================================= -->
+    <div id="screen-result" class="hidden flex-col min-h-screen py-6 sm:py-10 px-4 sm:px-6 fade-in">
+        <div class="max-w-5xl w-full mx-auto space-y-6 sm:space-y-8">
+            
+            <!-- Thẻ tổng kết điểm số & thông tin phiên làm bài -->
+            <section class="glass-card rounded-[2rem] p-6 sm:p-10 relative overflow-hidden">
+                <div class="text-center mb-6">
+                    <span id="result-badge" class="inline-block px-4 py-1.5 rounded-full bg-navy-900 text-white text-xs sm:text-sm font-bold uppercase tracking-wider mb-3">
+                        Hoàn thành bài kiểm tra
+                    </span>
+                    <h1 class="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-navy-900 mb-2">
+                        KẾT QUẢ BÀI LÀM CỦA BÉ <span class="text-navy-700 underline decoration-amber-400 decoration-4 underline-offset-4">CẨM TIÊN</span>
+                    </h1>
+                    <p id="result-praise" class="text-base sm:text-lg font-semibold text-navy-700 max-w-2xl mx-auto">
+                        Lời khen ngợi động viên...
+                    </p>
+                </div>
+
+                <!-- Khối hiển thị ĐIỂM SỐ NỔI BẬT + Bảng thông tin chi tiết -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    
+                    <!-- Cột Điểm Số (5 cột) -->
+                    <div class="lg:col-span-5 rounded-3xl bg-gradient-to-br from-navy-900 via-navy-800 to-navy-700 text-white p-6 sm:p-8 flex flex-col items-center justify-center text-center shadow-xl relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 w-36 h-36 rounded-full bg-white/10 pointer-events-none"></div>
+                        <p class="text-xs sm:text-sm uppercase tracking-widest text-navy-100 font-bold mb-2">Điểm số đạt được</p>
+                        <div class="font-display font-black text-5xl sm:text-6xl md:text-7xl text-amber-300 tracking-tight my-1" id="result-score-big">
+                            10,0
+                        </div>
+                        <p class="text-lg sm:text-xl font-bold text-white mb-4">trên thang điểm 10</p>
+                        <div class="px-4 py-2 rounded-2xl bg-white/15 border border-white/20 text-sm sm:text-base font-bold">
+                            Đúng <span id="result-correct-count" class="text-amber-300 font-extrabold">20</span> / 20 câu hỏi
+                        </div>
+                    </div>
+
+                    <!-- Cột Thông Tin Phiên Làm Bài (7 cột) -->
+                    <div class="lg:col-span-7 bg-white/85 border border-navy-900/10 rounded-3xl p-5 sm:p-7 flex flex-col justify-between">
+                        <h2 class="font-display font-extrabold text-lg sm:text-xl text-navy-900 mb-4 pb-2 border-b border-navy-900/10">
+                            Thông tin chi tiết bài kiểm tra
+                        </h2>
+                        <dl class="space-y-3.5 text-sm sm:text-base">
+                            <div class="flex flex-col sm:flex-row sm:justify-between gap-1">
+                                <dt class="text-navy-600 font-semibold">Tên học sinh:</dt>
+                                <dd class="font-extrabold text-navy-900 text-base sm:text-lg" id="result-student-name">Cẩm Tiên</dd>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between gap-1">
+                                <dt class="text-navy-600 font-semibold">Thời gian vào làm bài:</dt>
+                                <dd class="font-bold text-navy-900" id="result-start-time">--:--:--</dd>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between gap-1">
+                                <dt class="text-navy-600 font-semibold">Thời gian nộp bài:</dt>
+                                <dd class="font-bold text-navy-900" id="result-end-time">--:--:--</dd>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between gap-1">
+                                <dt class="text-navy-600 font-semibold">Tổng thời gian làm bài:</dt>
+                                <dd class="font-extrabold text-navy-800" id="result-duration">-- phút -- giây</dd>
+                            </div>
+                            <div class="flex flex-col sm:flex-row sm:justify-between gap-1 pt-2 border-t border-navy-900/10">
+                                <dt class="text-navy-600 font-semibold">Quy đổi thang điểm 10:</dt>
+                                <dd class="font-extrabold text-emerald-700" id="result-score-summary">10,0 / 10 điểm (Đúng 20/20 câu)</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Nút Làm lại bài mới -->
+                <div class="mt-8 flex justify-center">
+                    <button id="btn-retry-quiz" type="button"
+                        class="w-full sm:w-auto min-w-[280px] py-4 px-8 rounded-2xl bg-navy-900 hover:bg-navy-950 text-white font-display font-extrabold text-base sm:text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition flex items-center justify-center gap-3 cursor-pointer">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <span>LÀM LẠI BÀI MỚI</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Lịch sử chi tiết 20 câu làm bài -->
+            <section class="glass-card rounded-[2rem] p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-navy-900/10">
+                    <div>
+                        <h2 class="font-display font-extrabold text-xl sm:text-2xl text-navy-900">
+                            Lịch sử chi tiết bài làm
+                        </h2>
+                        <p class="text-sm text-navy-600">Xem lại từng câu hỏi, đáp án đã chọn và hướng dẫn giải</p>
+                    </div>
+
+                    <!-- Bộ lọc câu hỏi -->
+                    <div class="flex flex-wrap gap-2" id="history-filters">
+                        <button type="button" data-filter="all" class="filter-btn active px-4 py-2 rounded-xl text-sm font-bold bg-navy-900 text-white shadow-sm cursor-pointer">
+                            Tất cả (20)
+                        </button>
+                        <button type="button" data-filter="correct" class="filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50 cursor-pointer">
+                            Câu đúng (<span id="filter-count-correct">0</span>)
+                        </button>
+                        <button type="button" data-filter="wrong" class="filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-rose-700 border border-rose-200 hover:bg-rose-50 cursor-pointer">
+                            Câu sai (<span id="filter-count-wrong">0</span>)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Danh sách 20 thẻ chi tiết -->
+                <div id="result-history-list" class="space-y-4">
+                    <!-- Render từng câu bằng JS -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- CUSTOM HTML MODAL XÁC NHẬN NỘP BÀI (KHÔNG DÙNG ALERT)      -->
+    <!-- ========================================================= -->
+    <div id="submit-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-navy-950/60 backdrop-blur-sm fade-in">
+        <div class="w-full max-w-md bg-white rounded-[2rem] p-6 sm:p-8 shadow-2xl border border-navy-900/10 text-center">
+            <div id="modal-icon-wrapper" class="w-16 h-16 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-9 h-9" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+
+            <h3 class="font-display font-extrabold text-xl sm:text-2xl text-navy-900 mb-2">
+                Xác nhận nộp bài?
+            </h3>
+            <p id="modal-message" class="text-sm sm:text-base text-navy-700 mb-6 leading-relaxed">
+                Cẩm Tiên có chắc chắn muốn nộp bài ngay bây giờ không?
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button id="btn-modal-cancel" type="button"
+                    class="flex-1 py-3.5 px-4 rounded-2xl bg-navy-50 hover:bg-navy-100 text-navy-900 font-bold text-sm sm:text-base transition cursor-pointer">
+                    Quay lại làm tiếp
+                </button>
+                <button id="btn-modal-confirm" type="button"
+                    class="flex-1 py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-display font-extrabold text-sm sm:text-base shadow-md transition cursor-pointer">
+                    Xác nhận nộp bài
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast thông báo tự động nộp bài khi hết giờ -->
+    <div id="timeout-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 hidden items-center gap-3 px-6 py-4 rounded-2xl bg-rose-600 text-white font-bold shadow-2xl">
+        <svg class="w-6 h-6 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Đã hết 40 phút làm bài! Hệ thống tự động nộp bài của Cẩm Tiên.</span>
+    </div>
+
+    <!-- Footer tinh tế -->
+    <footer class="text-center py-4 px-4 text-xs sm:text-sm text-navy-600 font-medium">
+        Hệ thống Ôn luyện Toán Lớp 3 • Thiết kế dành riêng cho bé <strong>Cẩm Tiên</strong>
+    </footer>
+
+    <!-- ========================================================= -->
+    <!-- LOGIC JAVASCRIPT SINH ĐỀ, XÁO TRỘN, ĐẾM NGƯỢC & CHẤM ĐIỂM -->
+    <!-- ========================================================= -->
+    <script>
+        /**
+         * Hằng số thông tin cố định của học sinh và bài thi
+         */
+        const STUDENT_NAME = "Cẩm Tiên";
+        const TOTAL_QUESTIONS = 20;
+        const EXAM_DURATION_SECONDS = 40 * 60; // 40 phút = 2400 giây
+
+        /**
+         * Trạng thái toàn cục của phiên làm bài
+         */
+        let quizState = {
+            questions: [],          // Mảng 20 câu hỏi đã sinh & xáo trộn
+            userAnswers: [],        // Mảng lưu index đáp án bé chọn (null nếu chưa chọn)
+            currentIndex: 0,        // Câu hỏi đang hiển thị (0 -> 19)
+            remainingSeconds: EXAM_DURATION_SECONDS,
+            timerInterval: null,
+            startTimeObj: null,     // Date object lúc bấm Bắt đầu
+            endTimeObj: null,       // Date object lúc Nộp bài
+            isSubmitted: false
+        };
+
+        /* =========================================================
+           1. TIỆN ÍCH NGẪU NHIÊN & XÁO TRỘN (FISHER-YATES SHUFFLE)
+           ========================================================= */
+        function randInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        /**
+         * Tạo 4 phương án trắc nghiệm duy nhất và xáo trộn vị trí đáp án đúng
+         */
+        function buildShuffledOptions(correctText, distractorTexts) {
+            const uniqueSet = new Set([String(correctText)]);
+            for (const d of distractorTexts) {
+                if (uniqueSet.size < 4 && String(d) !== String(correctText)) {
+                    uniqueSet.add(String(d));
+                }
+            }
+            // Đảm bảo luôn đủ 4 phương án khác nhau
+            let fallbackOffset = 1;
+            while (uniqueSet.size < 4) {
+                uniqueSet.add(`${correctText} (sai ${fallbackOffset++})`);
+            }
+            const shuffled = shuffleArray(Array.from(uniqueSet));
+            return {
+                options: shuffled,
+                correctIndex: shuffled.indexOf(String(correctText))
+            };
+        }
+
+        /* =========================================================
+           2. BỘ SINH CÂU HỎI TOÁN LỚP 3 THÔNG MINH (20 CÂU ĐA DẠNG)
+           ========================================================= */
+
+        // Dạng 1: Phép nhân 2 chữ số với 1 chữ số (không nhớ hoặc có nhớ 1 lần)
+        function genMulBasic() {
+            const a = randInt(12, 49);
+            const b = randInt(2, 5);
+            const ans = a * b;
+            const tens = Math.floor(a / 10);
+            const ones = a % 10;
+
+            // Lỗi sai phổ biến: quên nhớ hàng chục hoặc nhân nhầm chữ số hàng đơn vị
+            const d1 = ans - 10 > 0 ? ans - 10 : ans + 10;
+            const d2 = (tens * b) * 10 + ((ones * b) % 10); // Quên nhớ từ hàng đơn vị sang chục
+            const d3 = ans + b;
+            const d4 = (tens + b) * 10 + (ones * b) % 10;
+
+            const { options, correctIndex } = buildShuffledOptions(ans, [d1, d2, d3, d4]);
+            return {
+                topic: "Phép nhân 2 chữ số với 1 chữ số",
+                question: `Tính kết quả của phép nhân: ${a} × ${b} = ?`,
+                options,
+                correctIndex,
+                explanation: `Ta đặt tính rồi tính: ${b} nhân ${ones} bằng ${ones * b}; ${b} nhân ${tens} chục (cộng nhớ nếu có) được kết quả ${a} × ${b} = ${ans}.`
+            };
+        }
+
+        // Dạng 2: Phép nhân 2 chữ số với 1 chữ số (số lớn, có nhớ)
+        function genMulCarry() {
+            const a = randInt(36, 98);
+            const b = randInt(3, 9);
+            const ans = a * b;
+            const tens = Math.floor(a / 10);
+            const ones = a % 10;
+
+            const d1 = ans - 10;
+            const d2 = ans + 10;
+            const d3 = (tens * b) * 10 + ((ones * b) % 10); // Quên nhớ
+            const d4 = ans - b;
+
+            const { options, correctIndex } = buildShuffledOptions(ans, [d1, d2, d3, d4]);
+            return {
+                topic: "Phép nhân có nhớ",
+                question: `Kết quả của phép tính ${a} × ${b} là bao nhiêu?`,
+                options,
+                correctIndex,
+                explanation: `Nhân lần lượt từ phải sang trái: ${b} × ${ones} = ${b * ones} (viết ${(b * ones) % 10}, nhớ ${Math.floor((b * ones) / 10)}), sau đó ${b} × ${tens} + ${Math.floor((b * ones) / 10)} = ${b * tens + Math.floor((b * ones) / 10)}. Vậy ${a} × ${b} = ${ans}.`
+            };
+        }
+
+        // Dạng 3: Tìm số bị chia trong phép chia hết (x : b = q => x = q × b)
+        function genFindDividendMul() {
+            const q = randInt(14, 48);
+            const b = randInt(3, 8);
+            const x = q * b;
+
+            const d1 = x - 10;
+            const d2 = x + 10;
+            const d3 = Math.floor(q / b) + 12;
+            const d4 = q + b;
+
+            const { options, correctIndex } = buildShuffledOptions(x, [d1, d2, d3, d4]);
+            return {
+                topic: "Tìm thành phần phép tính",
+                question: `Tìm giá trị của x, biết: x : ${b} = ${q}`,
+                options,
+                correctIndex,
+                explanation: `Muốn tìm số bị chia (x), ta lấy thương nhân với số chia: x = ${q} × ${b} = ${x}.`
+            };
+        }
+
+        // Dạng 4: Toán đố thực tế về phép nhân 2 chữ số với 1 chữ số
+        function genWordMul() {
+            const scenarios = [
+                (a, b, ans) => `Mỗi hộp bánh có ${a} chiếc bánh quy. Hỏi ${b} hộp bánh như thế có tất cả bao nhiêu chiếc bánh quy?`,
+                (a, b, ans) => `Lớp 3A xếp thành ${b} hàng, mỗi hàng có ${a} học sinh. Hỏi lớp 3A có tất cả bao nhiêu học sinh?`,
+                (a, b, ans) => `Một quyển truyện dày ${a} trang. Cẩm Tiên đọc hết ${b} quyển truyện dày như thế thì đã đọc được bao nhiêu trang?`,
+                (a, b, ans) => `Mỗi thùng sữa có ${a} hộp sữa tươi. Hỏi ${b} thùng sữa như vậy có tất cả bao nhiêu hộp sữa?`
+            ];
+            const a = randInt(15, 45);
+            const b = randInt(3, 7);
+            const ans = a * b;
+            const qText = scenarios[randInt(0, scenarios.length - 1)](a, b, ans);
+
+            const { options, correctIndex } = buildShuffledOptions(ans, [ans - 10, ans + 10, a + b, ans - b]);
+            return {
+                topic: "Toán có lời văn (Phép nhân)",
+                question: qText,
+                options,
+                correctIndex,
+                explanation: `Số lượng tất cả là: ${a} × ${b} = ${ans}.`
+            };
+        }
+
+        // Dạng 5: Phép chia hết (2 chữ số chia 1 chữ số, thương 2 chữ số)
+        function genDivExactTwoDigitQuotient() {
+            const divisor = randInt(2, 8);
+            const maxQ = Math.floor(99 / divisor);
+            const minQ = Math.max(11, Math.ceil(22 / divisor));
+            const quotient = randInt(minQ, maxQ);
+            const dividend = divisor * quotient;
+
+            const d1 = quotient + 1;
+            const d2 = quotient - 1;
+            const d3 = quotient + 10;
+            const d4 = `${quotient} (dư 1)`;
+
+            const { options, correctIndex } = buildShuffledOptions(quotient, [d1, d2, d3, d4]);
+            return {
+                topic: "Phép chia hết (2 chữ số cho 1 chữ số)",
+                question: `Tính thương của phép chia: ${dividend} : ${divisor} = ?`,
+                options,
+                correctIndex,
+                explanation: `Vì ${quotient} × ${divisor} = ${dividend} nên ${dividend} : ${divisor} = ${quotient} (phép chia hết, số dư bằng 0).`
+            };
+        }
+
+        // Dạng 6: Phép chia có dư - Tìm cả thương và số dư (VD: 47 : 5 = 9 (dư 2))
+        function genDivRemainderFull() {
+            const divisor = randInt(3, 9);
+            const quotient = randInt(8, Math.floor(92 / divisor));
+            const remainder = randInt(1, divisor - 1);
+            const dividend = divisor * quotient + remainder;
+
+            const correctStr = `${quotient} (dư ${remainder})`;
+            // Lỗi sai kinh điển lớp 3: viết số dư >= số chia, hoặc tính sai thương 1 đơn vị
+            const d1 = `${quotient - 1} (dư ${remainder + divisor})`;
+            const d2 = `${quotient + 1} (dư ${remainder})`;
+            const d3 = `${quotient} (dư ${remainder === 1 ? 2 : remainder - 1})`;
+            const d4 = `${quotient}`;
+
+            const { options, correctIndex } = buildShuffledOptions(correctStr, [d1, d2, d3, d4]);
+            return {
+                topic: "Phép chia có dư",
+                question: `Kết quả của phép chia ${dividend} : ${divisor} là:`,
+                options,
+                correctIndex,
+                explanation: `Ta có ${divisor} × ${quotient} = ${divisor * quotient}, lấy ${dividend} - ${divisor * quotient} = ${remainder} (bé hơn số chia ${divisor}). Vậy ${dividend} : ${divisor} = ${correctStr}.`
+            };
+        }
+
+        // Dạng 7: Hỏi riêng SỐ DƯ của phép chia có dư
+        function genDivAskRemainder() {
+            const divisor = randInt(4, 9);
+            const quotient = randInt(7, Math.floor(94 / divisor));
+            const remainder = randInt(1, divisor - 1);
+            const dividend = divisor * quotient + remainder;
+
+            const d1 = 0;
+            const d2 = remainder === 1 ? 2 : remainder - 1;
+            const d3 = divisor; // Sai lầm: chọn số dư bằng số chia
+            const d4 = remainder + 1 < divisor ? remainder + 1 : divisor + 1;
+
+            const { options, correctIndex } = buildShuffledOptions(remainder, [d1, d2, d3, d4]);
+            return {
+                topic: "Tìm số dư trong phép chia",
+                question: `Trong phép chia ${dividend} : ${divisor}, số dư là bao nhiêu?`,
+                options,
+                correctIndex,
+                explanation: `${dividend} : ${divisor} = ${quotient} (dư ${remainder}) vì ${quotient} × ${divisor} + ${remainder} = ${dividend}. Số dư luôn bé hơn số chia (${remainder} < ${divisor}).`
+            };
+        }
+
+        // Dạng 8: Nhận biết phép chia hết hoặc phép chia có dư trong 4 phép tính
+        function genIdentifyRemainderOrExact() {
+            const askRemainder = Math.random() < 0.5;
+            const usedDividends = new Set();
+
+            function makeExactExpr() {
+                let d, q, n;
+                do {
+                    d = randInt(3, 8);
+                    q = randInt(11, Math.floor(98 / d));
+                    n = d * q;
+                } while (usedDividends.has(`${n}:${d}`));
+                usedDividends.add(`${n}:${d}`);
+                return `${n} : ${d}`;
+            }
+
+            function makeRemExpr() {
+                let d, q, r, n;
+                do {
+                    d = randInt(3, 8);
+                    q = randInt(10, Math.floor(94 / d));
+                    r = randInt(1, d - 1);
+                    n = d * q + r;
+                } while (usedDividends.has(`${n}:${d}`));
+                usedDividends.add(`${n}:${d}`);
+                return `${n} : ${d}`;
+            }
+
+            if (askRemainder) {
+                const correctExpr = makeRemExpr();
+                const distractors = [makeExactExpr(), makeExactExpr(), makeExactExpr()];
+                const { options, correctIndex } = buildShuffledOptions(correctExpr, distractors);
+                return {
+                    topic: "Nhận biết phép chia có dư",
+                    question: `Trong các phép tính dưới đây, phép chia nào là PHÉP CHIA CÓ DƯ?`,
+                    options,
+                    correctIndex,
+                    explanation: `Phép tính ${correctExpr} là phép chia có dư (số dư khác 0), còn ba phép tính kia đều là phép chia hết.`
+                };
+            } else {
+                const correctExpr = makeExactExpr();
+                const distractors = [makeRemExpr(), makeRemExpr(), makeRemExpr()];
+                const { options, correctIndex } = buildShuffledOptions(correctExpr, distractors);
+                return {
+                    topic: "Nhận biết phép chia hết",
+                    question: `Trong các phép tính dưới đây, phép chia nào là PHÉP CHIA HẾT?`,
+                    options,
+                    correctIndex,
+                    explanation: `Phép tính ${correctExpr} là phép chia hết (số dư bằng 0), còn ba phép tính kia đều là phép chia có dư.`
+                };
+            }
+        }
+
+        // Dạng 9: Toán đố thực tế về phép chia có dư (hỏi số nhóm/hộp đầy và số còn thừa)
+        function genWordDivRemainder() {
+            const divisor = randInt(4, 8);
+            const quotient = randInt(9, Math.floor(89 / divisor));
+            const remainder = randInt(1, divisor - 1);
+            const dividend = divisor * quotient + remainder;
+
+            const templates = [
+                {
+                    q: `Cô giáo có ${dividend} quyển vở, chia đều cho ${divisor} tổ. Hỏi mỗi tổ được nhiều nhất bao nhiêu quyển vở và còn thừa mấy quyển vở?`,
+                    ans: `${quotient} quyển, thừa ${remainder} quyển`,
+                    d: [
+                        `${quotient - 1} quyển, thừa ${remainder + divisor} quyển`,
+                        `${quotient + 1} quyển, thừa ${remainder} quyển`,
+                        `${quotient} quyển, thừa 0 quyển`
+                    ]
+                },
+                {
+                    q: `Có ${dividend} quả cam xếp vào các túi, mỗi túi đựng ${divisor} quả cam. Hỏi xếp được nhiều nhất bao nhiêu túi cam và còn thừa mấy quả?`,
+                    ans: `${quotient} túi, thừa ${remainder} quả`,
+                    d: [
+                        `${quotient + 1} túi, thừa ${remainder} quả`,
+                        `${quotient} túi, thừa ${divisor} quả`,
+                        `${quotient - 1} túi, thừa ${remainder} quả`
+                    ]
+                }
+            ];
+
+            const chosen = templates[randInt(0, templates.length - 1)];
+            const { options, correctIndex } = buildShuffledOptions(chosen.ans, chosen.d);
+            return {
+                topic: "Toán có lời văn (Phép chia có dư)",
+                question: chosen.q,
+                options,
+                correctIndex,
+                explanation: `Ta thực hiện phép chia: ${dividend} : ${divisor} = ${quotient} (dư ${remainder}). Vậy kết quả đúng là: ${chosen.ans}.`
+            };
+        }
+
+        // Dạng 10: Toán đố phép chia hết (giảm một số đi một số lần / chia đều)
+        function genWordDivExact() {
+            const divisor = randInt(3, 7);
+            const quotient = randInt(12, Math.floor(96 / divisor));
+            const dividend = divisor * quotient;
+
+            const { options, correctIndex } = buildShuffledOptions(quotient, [
+                quotient + 1,
+                quotient - 1,
+                quotient + 10,
+                dividend - divisor
+            ]);
+
+            return {
+                topic: "Toán có lời văn (Phép chia hết)",
+                question: `Một sợi dây dài ${dividend} cm được cắt thành ${divisor} đoạn bằng nhau. Hỏi mỗi đoạn dây dài bao nhiêu xăng-ti-mét?`,
+                options,
+                correctIndex,
+                explanation: `Độ dài mỗi đoạn dây là: ${dividend} : ${divisor} = ${quotient} (cm).`
+            };
+        }
+
+        /**
+         * Sinh đủ 20 câu hỏi không trùng lặp nội dung câu hỏi và xáo trộn thứ tự 20 câu
+         */
+        function generateFullExam() {
+            const generators = [
+                // 8 câu về phép nhân 2 chữ số với 1 chữ số
+                genMulBasic,
+                genMulBasic,
+                genMulCarry,
+                genMulCarry,
+                genMulCarry,
+                genFindDividendMul,
+                genWordMul,
+                genWordMul,
+                // 12 câu về phép chia 2 chữ số cho 1 chữ số (chia hết & chia có dư)
+                genDivExactTwoDigitQuotient,
+                genDivExactTwoDigitQuotient,
+                genDivExactTwoDigitQuotient,
+                genDivRemainderFull,
+                genDivRemainderFull,
+                genDivRemainderFull,
+                genDivAskRemainder,
+                genDivAskRemainder,
+                genIdentifyRemainderOrExact,
+                genIdentifyRemainderOrExact,
+                genWordDivRemainder,
+                genWordDivExact
+            ];
+
+            const generatedList = [];
+            const seenQuestions = new Set();
+
+            for (const genFn of generators) {
+                let item = genFn();
+                let attempts = 0;
+                while (seenQuestions.has(item.question) && attempts < 15) {
+                    item = genFn();
+                    attempts++;
+                }
+                seenQuestions.add(item.question);
+                generatedList.push(item);
+            }
+
+            // Xáo trộn toàn bộ 20 câu hỏi
+            return shuffleArray(generatedList);
+        }
+
+        /* =========================================================
+           3. QUẢN LÝ CHUYỂN MÀN HÌNH & ĐỒNG HỒ ĐẾM NGƯỢC
+           ========================================================= */
+        const screenStart = document.getElementById("screen-start");
+        const screenQuiz = document.getElementById("screen-quiz");
+        const screenResult = document.getElementById("screen-result");
+
+        function switchScreen(target) {
+            screenStart.classList.add("hidden");
+            screenStart.classList.remove("flex");
+            screenQuiz.classList.add("hidden");
+            screenQuiz.classList.remove("flex");
+            screenResult.classList.add("hidden");
+            screenResult.classList.remove("flex");
+
+            target.classList.remove("hidden");
+            target.classList.add("flex");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function formatSecondsMMSS(totalSec) {
+            const mins = Math.floor(totalSec / 60);
+            const secs = totalSec % 60;
+            return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+        }
+
+        function formatVietnameseDateTime(dateObj) {
+            const pad = (n) => String(n).padStart(2, "0");
+            const timeStr = `${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}:${pad(dateObj.getSeconds())}`;
+            const dateStr = `${pad(dateObj.getDate())}/${pad(dateObj.getMonth() + 1)}/${dateObj.getFullYear()}`;
+            return `${timeStr} - Ngày ${dateStr}`;
+        }
+
+        function formatDurationVietnamese(secondsElapsed) {
+            const safeSec = Math.max(1, secondsElapsed);
+            const mins = Math.floor(safeSec / 60);
+            const secs = safeSec % 60;
+            if (mins === 0) return `${secs} giây`;
+            return `${mins} phút ${secs} giây`;
+        }
+
+        function startCountdown() {
+            clearInterval(quizState.timerInterval);
+            updateTimerUI();
+
+            quizState.timerInterval = setInterval(() => {
+                quizState.remainingSeconds--;
+                updateTimerUI();
+
+                if (quizState.remainingSeconds <= 0) {
+                    clearInterval(quizState.timerInterval);
+                    handleAutoTimeoutSubmit();
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const timerDisplay = document.getElementById("timer-display");
+            const timerBox = document.getElementById("timer-box");
+            const timerIcon = document.getElementById("timer-icon");
+
+            timerDisplay.textContent = formatSecondsMMSS(Math.max(0, quizState.remainingSeconds));
+
+            // Đổi màu cảnh báo khi còn dưới 5 phút (300 giây)
+            if (quizState.remainingSeconds <= 300) {
+                timerBox.classList.remove("bg-white", "text-navy-900");
+                timerBox.classList.add("bg-rose-600", "text-white", "timer-warning");
+                timerIcon.classList.remove("text-navy-800");
+                timerIcon.classList.add("text-white");
+            } else {
+                timerBox.classList.add("bg-white", "text-navy-900");
+                timerBox.classList.remove("bg-rose-600", "text-white", "timer-warning");
+                timerIcon.classList.add("text-navy-800");
+                timerIcon.classList.remove("text-white");
+            }
+        }
+
+        /* =========================================================
+           4. RENDER GIAO DIỆN LÀM BÀI & TƯƠNG TÁC CHỌN ĐÁP ÁN
+           ========================================================= */
+        const optionLetters = ["A", "B", "C", "D"];
+
+        function startNewQuiz() {
+            quizState = {
+                questions: generateFullExam(),
+                userAnswers: new Array(TOTAL_QUESTIONS).fill(null),
+                currentIndex: 0,
+                remainingSeconds: EXAM_DURATION_SECONDS,
+                timerInterval: null,
+                startTimeObj: new Date(),
+                endTimeObj: null,
+                isSubmitted: false
+            };
+
+            document.getElementById("quiz-student-name").textContent = STUDENT_NAME;
+            switchScreen(screenQuiz);
+            renderQuestionNavGrid();
+            renderCurrentQuestion();
+            updateProgressCounter();
+            startCountdown();
+        }
+
+        function updateProgressCounter() {
+            const answeredCount = quizState.userAnswers.filter((ans) => ans !== null).length;
+            document.getElementById("quiz-progress-text").textContent = `Đã làm ${answeredCount}/${TOTAL_QUESTIONS} câu`;
+        }
+
+        function renderQuestionNavGrid() {
+            const grid = document.getElementById("question-nav-grid");
+            grid.innerHTML = "";
+
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.textContent = i + 1;
+                btn.setAttribute("aria-label", `Chuyển đến câu ${i + 1}`);
+
+                const isCurrent = i === quizState.currentIndex;
+                const isAnswered = quizState.userAnswers[i] !== null;
+
+                let baseClasses = "h-11 rounded-xl font-display font-extrabold text-sm sm:text-base transition flex items-center justify-center cursor-pointer ";
+                if (isAnswered) {
+                    baseClasses += "bg-navy-900 text-white shadow-sm ";
+                } else {
+                    baseClasses += "bg-white text-navy-900 border border-navy-900/20 hover:bg-navy-100 ";
+                }
+
+                if (isCurrent) {
+                    baseClasses += "ring-3 ring-amber-400 ring-offset-1 scale-105 ";
+                }
+
+                btn.className = baseClasses;
+                btn.addEventListener("click", () => {
+                    quizState.currentIndex = i;
+                    renderCurrentQuestion();
+                    renderQuestionNavGrid();
+                });
+
+                grid.appendChild(btn);
+            }
+        }
+
+        function renderCurrentQuestion() {
+            const idx = quizState.currentIndex;
+            const qObj = quizState.questions[idx];
+            const selectedOptionIdx = quizState.userAnswers[idx];
+
+            document.getElementById("question-number-badge").textContent = `Câu ${idx + 1} / ${TOTAL_QUESTIONS}`;
+            document.getElementById("question-topic-badge").textContent = qObj.topic;
+            document.getElementById("question-text").textContent = qObj.question;
+
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            qObj.options.forEach((optText, optIdx) => {
+                const isSelected = selectedOptionIdx === optIdx;
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `option-btn w-full text-left p-4 sm:p-5 rounded-2xl border-2 flex items-center gap-3.5 cursor-pointer ${
+                    isSelected
+                        ? "selected"
+                        : "bg-white/90 border-navy-900/15 text-navy-900"
+                }`;
+
+                const badgeClass = isSelected
+                    ? "bg-amber-300 text-navy-950"
+                    : "bg-navy-100 text-navy-900";
+
+                btn.innerHTML = `
+                    <span class="w-10 h-10 rounded-xl ${badgeClass} font-display font-black text-base sm:text-lg flex items-center justify-center shrink-0">
+                        ${optionLetters[optIdx]}
+                    </span>
+                    <span class="font-display font-bold text-lg sm:text-xl leading-snug break-words">
+                        ${optText}
+                    </span>
+                `;
+
+                btn.addEventListener("click", () => {
+                    quizState.userAnswers[idx] = optIdx;
+                    renderCurrentQuestion();
+                    renderQuestionNavGrid();
+                    updateProgressCounter();
+                });
+
+                optionsContainer.appendChild(btn);
+            });
+
+            // Cập nhật trạng thái nút Câu trước / Câu tiếp theo
+            const btnPrev = document.getElementById("btn-prev");
+            const btnNext = document.getElementById("btn-next");
+
+            btnPrev.disabled = idx === 0;
+            if (idx === TOTAL_QUESTIONS - 1) {
+                btnNext.innerHTML = `
+                    <span>Xem lại từ câu 1</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9"/></svg>
+                `;
+            } else {
+                btnNext.innerHTML = `
+                    <span>Câu tiếp theo</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                `;
+            }
+        }
+
+        /* =========================================================
+           5. XỬ LÝ MODAL XÁC NHẬN & NỘP BÀI CHẤM ĐIỂM
+           ========================================================= */
+        const submitModal = document.getElementById("submit-modal");
+
+        function openSubmitModal() {
+            const unansweredCount = quizState.userAnswers.filter((a) => a === null).length;
+            const modalMessage = document.getElementById("modal-message");
+            const iconWrap = document.getElementById("modal-icon-wrapper");
+
+            if (unansweredCount > 0) {
+                iconWrap.className = "w-16 h-16 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4";
+                modalMessage.innerHTML = `Cẩm Tiên vẫn còn <strong class="text-rose-600 text-lg">${unansweredCount} câu hỏi</strong> chưa chọn đáp án. Con có muốn quay lại kiểm tra thêm hay nộp bài luôn?`;
+            } else {
+                iconWrap.className = "w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4";
+                modalMessage.innerHTML = `Tuyệt vời! <strong>Cẩm Tiên</strong> đã hoàn thành tất cả <strong>20/20 câu hỏi</strong>. Con đã sẵn sàng nộp bài để xem điểm chưa?`;
+            }
+
+            submitModal.classList.remove("hidden");
+            submitModal.classList.add("flex");
+        }
+
+        function closeSubmitModal() {
+            submitModal.classList.add("hidden");
+            submitModal.classList.remove("flex");
+        }
+
+        function handleAutoTimeoutSubmit() {
+            closeSubmitModal();
+            const toast = document.getElementById("timeout-toast");
+            toast.classList.remove("hidden");
+            toast.classList.add("flex");
+            setTimeout(() => {
+                toast.classList.add("hidden");
+                toast.classList.remove("flex");
+            }, 4500);
+
+            finalizeAndShowResult();
+        }
+
+        function formatScoreComma(scoreNumber) {
+            return scoreNumber.toFixed(1).replace(".", ",");
+        }
+
+        function getPraiseMessage(score) {
+            if (score >= 9.5) {
+                return "Xuất sắc quá Cẩm Tiên ơi! Con nắm cực kỳ vững phép nhân và phép chia (cả chia hết lẫn chia có dư). Tiếp tục phát huy nhé!";
+            } else if (score >= 8.0) {
+                return "Giỏi lắm Cẩm Tiên! Con làm bài rất tốt, chỉ cần rà soát kỹ thêm một chút ở các phép tính có nhớ và số dư là đạt điểm 10 trọn vẹn!";
+            } else if (score >= 6.5) {
+                return "Cẩm Tiên làm bài khá tốt rồi! Con hãy xem lại phần giải thích ở các câu chưa đúng bên dưới để rút kinh nghiệm cho lần sau nhé.";
+            } else {
+                return "Cố gắng lên Cẩm Tiên nhé! Con hãy đọc kỹ hướng dẫn từng câu bên dưới, chú ý kiểm tra số dư luôn bé hơn số chia và thử làm lại bài mới nào!";
+            }
+        }
+
+        function finalizeAndShowResult() {
+            if (quizState.isSubmitted) return;
+            quizState.isSubmitted = true;
+            clearInterval(quizState.timerInterval);
+            closeSubmitModal();
+
+            quizState.endTimeObj = new Date();
+            const elapsedSeconds = Math.min(
+                EXAM_DURATION_SECONDS,
+                Math.round((quizState.endTimeObj - quizState.startTimeObj) / 1000)
+            );
+
+            // Chấm điểm: mỗi câu đúng 0.5 điểm -> tối đa 10 điểm
+            let correctCount = 0;
+            quizState.questions.forEach((q, idx) => {
+                if (quizState.userAnswers[idx] === q.correctIndex) {
+                    correctCount++;
+                }
+            });
+
+            const wrongCount = TOTAL_QUESTIONS - correctCount;
+            const scoreTenScale = correctCount * 0.5;
+            const scoreFormatted = formatScoreComma(scoreTenScale);
+
+            // Điền dữ liệu vào màn hình kết quả
+            document.getElementById("result-student-name").textContent = STUDENT_NAME;
+            document.getElementById("result-score-big").textContent = scoreFormatted;
+            document.getElementById("result-correct-count").textContent = correctCount;
+            document.getElementById("result-start-time").textContent = formatVietnameseDateTime(quizState.startTimeObj);
+            document.getElementById("result-end-time").textContent = formatVietnameseDateTime(quizState.endTimeObj);
+            document.getElementById("result-duration").textContent = formatDurationVietnamese(elapsedSeconds);
+            document.getElementById("result-score-summary").textContent = `${scoreFormatted} / 10 điểm (Đúng ${correctCount}/20 câu)`;
+            document.getElementById("result-praise").textContent = getPraiseMessage(scoreTenScale);
+
+            document.getElementById("filter-count-correct").textContent = correctCount;
+            document.getElementById("filter-count-wrong").textContent = wrongCount;
+
+            // Reset bộ lọc về "Tất cả"
+            setActiveFilterButton("all");
+            renderResultHistory("all");
+
+            // Tự động gửi kết quả lên Google Sheets
+            sendResultToGoogleSheets(elapsedSeconds, correctCount, scoreFormatted);
+
+            switchScreen(screenResult);
+        }
+
+        function renderResultHistory(filterMode) {
+            const container = document.getElementById("result-history-list");
+            container.innerHTML = "";
+
+            let visibleItems = 0;
+
+            quizState.questions.forEach((q, idx) => {
+                const userAnsIdx = quizState.userAnswers[idx];
+                const isCorrect = userAnsIdx === q.correctIndex;
+
+                if (filterMode === "correct" && !isCorrect) return;
+                if (filterMode === "wrong" && isCorrect) return;
+                visibleItems++;
+
+                const userChoiceText =
+                    userAnsIdx !== null
+                        ? `${optionLetters[userAnsIdx]}. ${q.options[userAnsIdx]}`
+                        : "Chưa chọn đáp án";
+
+                const correctChoiceText = `${optionLetters[q.correctIndex]}. ${q.options[q.correctIndex]}`;
+
+                const card = document.createElement("article");
+                card.className = `rounded-2xl p-5 sm:p-6 border-2 transition ${
+                    isCorrect
+                        ? "bg-emerald-50/60 border-emerald-500/30"
+                        : "bg-rose-50/60 border-rose-500/30"
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2.5">
+                            <span class="px-3.5 py-1 rounded-xl bg-navy-900 text-white font-display font-extrabold text-sm">
+                                Câu ${idx + 1}
+                            </span>
+                            <span class="text-xs font-bold text-navy-600 bg-white/80 px-3 py-1 rounded-lg border border-navy-900/10">
+                                ${q.topic}
+                            </span>
+                        </div>
+
+                        ${
+                            isCorrect
+                                ? `<span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl bg-emerald-600 text-white font-display font-extrabold text-xs sm:text-sm shadow-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    ĐÚNG (+0,5 điểm)
+                                   </span>`
+                                : `<span class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl bg-rose-600 text-white font-display font-extrabold text-xs sm:text-sm shadow-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    SAI
+                                   </span>`
+                        }
+                    </div>
+
+                    <p class="font-display font-extrabold text-base sm:text-lg text-navy-900 mb-4 leading-snug">
+                        ${q.question}
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3.5 text-sm sm:text-base">
+                        <div class="p-3.5 rounded-xl bg-white border ${isCorrect ? "border-emerald-300" : "border-rose-300"}">
+                            <span class="block text-xs font-bold uppercase tracking-wider text-navy-500 mb-1">
+                                Đáp án ${STUDENT_NAME} chọn:
+                            </span>
+                            <span class="font-extrabold ${isCorrect ? "text-emerald-700" : "text-rose-700"}">
+                                ${userChoiceText}
+                            </span>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-white border border-navy-900/15">
+                            <span class="block text-xs font-bold uppercase tracking-wider text-navy-500 mb-1">
+                                Đáp án đúng của hệ thống:
+                            </span>
+                            <span class="font-extrabold text-navy-900">
+                                ${correctChoiceText}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl bg-white/85 border border-navy-900/10 text-xs sm:text-sm text-navy-800 leading-relaxed">
+                        <strong class="text-navy-900">Hướng dẫn giải:</strong> ${q.explanation}
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            if (visibleItems === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-navy-600 font-semibold">
+                        Không có câu hỏi nào trong mục lọc này.
+                    </div>
+                `;
+            }
+        }
+
+        function setActiveFilterButton(activeFilter) {
+            document.querySelectorAll(".filter-btn").forEach((btn) => {
+                const f = btn.getAttribute("data-filter");
+                if (f === activeFilter) {
+                    btn.className = "filter-btn active px-4 py-2 rounded-xl text-sm font-bold bg-navy-900 text-white shadow-sm cursor-pointer";
+                } else if (f === "correct") {
+                    btn.className = "filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-50 cursor-pointer";
+                } else if (f === "wrong") {
+                    btn.className = "filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-rose-700 border border-rose-200 hover:bg-rose-50 cursor-pointer";
+                } else {
+                    btn.className = "filter-btn px-4 py-2 rounded-xl text-sm font-bold bg-white text-navy-900 border border-navy-900/15 hover:bg-navy-50 cursor-pointer";
+                }
+            });
+        }
+
+        /* =========================================================
+           6. GẮN SỰ KIỆN CHO CÁC NÚT ĐIỀU KHIỂN
+           ========================================================= */
+        document.getElementById("btn-start-quiz").addEventListener("click", startNewQuiz);
+
+        document.getElementById("btn-prev").addEventListener("click", () => {
+            if (quizState.currentIndex > 0) {
+                quizState.currentIndex--;
+                renderCurrentQuestion();
+                renderQuestionNavGrid();
+            }
+        });
+
+        document.getElementById("btn-next").addEventListener("click", () => {
+            if (quizState.currentIndex < TOTAL_QUESTIONS - 1) {
+                quizState.currentIndex++;
+            } else {
+                quizState.currentIndex = 0;
+            }
+            renderCurrentQuestion();
+            renderQuestionNavGrid();
+        });
+
+        document.getElementById("btn-submit-open").addEventListener("click", openSubmitModal);
+        document.getElementById("btn-modal-cancel").addEventListener("click", closeSubmitModal);
+        document.getElementById("btn-modal-confirm").addEventListener("click", finalizeAndShowResult);
+
+        // Đóng modal khi chạm ra vùng nền tối bên ngoài
+        submitModal.addEventListener("click", (e) => {
+            if (e.target === submitModal) closeSubmitModal();
+        });
+
+        // Bộ lọc lịch sử bài làm
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const filter = btn.getAttribute("data-filter");
+                setActiveFilterButton(filter);
+                renderResultHistory(filter);
+            });
+        });
+
+        // Nút làm lại bài mới
+        document.getElementById("btn-retry-quiz").addEventListener("click", startNewQuiz);
+
+        /* =========================================================
+           7. TỰ ĐỘNG GỬI KẾT QUẢ LÊN GOOGLE SHEETS KHI NỘP BÀI
+           ========================================================= */
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwhCB9X6CMtastV_tP7uUKUiJRYZ71XW3SAt5wN0PjBkks7UPSdAwsmLjhvzBzxH_vKew/exec";
+
+        async function sendResultToGoogleSheets(elapsedSeconds, correctCount, scoreFormatted) {
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("DÁN_URL")) {
+                console.warn("Chưa cấu hình đường dẫn Google Apps Script.");
+                return;
+            }
+
+            // Lấy ngày hiện tại 2 chữ số từ thời điểm vào làm bài (VD: "18")
+            const dayOfMonth = String(quizState.startTimeObj.getDate()).padStart(2, "0");
+
+            // Chuẩn bị danh sách chi tiết 20 câu hỏi
+            const detailsList = quizState.questions.map((q, idx) => {
+                const userAnsIdx = quizState.userAnswers[idx];
+                const isCorrect = userAnsIdx === q.correctIndex;
+
+                const userChoiceText = userAnsIdx !== null
+                    ? `${optionLetters[userAnsIdx]}. ${q.options[userAnsIdx]}`
+                    : "Chưa chọn đáp án";
+
+                const correctChoiceText = `${optionLetters[q.correctIndex]}. ${q.options[q.correctIndex]}`;
+
+                return {
+                    questionNumber: `Câu ${idx + 1}`,
+                    topic: q.topic,
+                    questionText: q.question,
+                    correctAnswer: correctChoiceText,
+                    userAnswer: userChoiceText,
+                    isCorrect: isCorrect,
+                    points: isCorrect ? "0,5" : "0"
+                };
+            });
+
+            // Gom toàn bộ dữ liệu thành gói JSON gửi đi
+            const payload = {
+                dayOfMonth: dayOfMonth,
+                studentName: STUDENT_NAME,
+                startTime: formatVietnameseDateTime(quizState.startTimeObj),
+                endTime: formatVietnameseDateTime(quizState.endTimeObj),
+                duration: formatDurationVietnamese(elapsedSeconds),
+                correctSummary: `'${correctCount}/${TOTAL_QUESTIONS}`,
+                score: scoreFormatted,
+                details: detailsList
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: {
+                        "Content-Type": "text/plain;charset=utf-8"
+                    },
+                    body: JSON.stringify(payload)
+                });
+                console.log("Đã gửi kết quả bài làm lên Google Sheets thành công!");
+            } catch (err) {
+                console.error("Lỗi khi gửi dữ liệu lên Google Sheets:", err);
+            }
+        }
+    </script>
+</body>
+</html>
